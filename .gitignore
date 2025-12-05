@@ -1,11 +1,10 @@
 __pycache__/
+*.egg-info
+dist/
 
-# Prevent django project shim
+# Prevent unneeded django created files
 manage.py
-django_project_shim/
 *.sqlite3
-
-# Prevent unneeded django app files
 django_db_translate/migrations/
 django_db_translate/models.py
 django_db_translate/tests.py

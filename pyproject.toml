@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-db-translate"
+version = "0.1"
+dependencies = [
+    "django>=5.2",
+]
+description = "A Django app to include database strings in .po files"
+license = "BSD-3-Clause"
+requires-python = ">= 3.10"
+authors = [
+    {name = "Otach", email = "mason@swingproxy.com"},
+]
+classifiers = [
+    "Framework :: Django",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+]
