@@ -1,0 +1,17 @@
+__pycache__/
+
+# Prevent django project shim
+manage.py
+django_project_shim/
+*.sqlite3
+
+# Prevent unneeded django app files
+django_db_translate/migrations/
+django_db_translate/models.py
+django_db_translate/tests.py
+
+# Any temp file created by custom makemessages
+tmp*.py
+
+# Do not add locale to VCS
+locale/
