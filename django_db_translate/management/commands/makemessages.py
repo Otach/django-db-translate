@@ -52,6 +52,12 @@ class Command(MMCommand):
                 for s in row_string:
                     strings.add(f'gettext("{str(s)}")')  # Wrap the string with the xgettext keyword
 
+        if len(strings) == 0:
+            # Nothing to do, do not create the temp file
+            if self.verbosity > 1:
+                self.stdout.write("No strings marked for translation were found in the database.")
+            return
+
         # Create a temporary `.py` file in this directory so `xgettext`
         #  will look through it for strings
         # TODO: (at a later time) figure out a custom extension. (i.e .dbstrings)
