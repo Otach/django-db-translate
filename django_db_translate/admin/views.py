@@ -1,11 +1,9 @@
-from django.conf import settings
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, redirect, reverse
-from django.utils.translation import activate
 
 from django_db_translate.admin.forms import TranslationFormSet
 
-@staff_member_required
+@permission_required("dbtranslate.manage_translations")
 def locale_view(request, locale, context_func):
     fs = TranslationFormSet(
         request.POST if request.method == "POST" else None,

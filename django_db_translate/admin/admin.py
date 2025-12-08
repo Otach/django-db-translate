@@ -45,7 +45,10 @@ class DBTranslateAdmin(admin.AdminSite):
     def get_app_list(self, request, app_label=None):
         app_list = super().get_app_list(request, app_label=app_label)
 
-        if app_label is None or app_label == 'dbtranslate':
+        if (
+            app_label is None or
+            app_label == 'dbtranslate'
+        ) and request.user.has_perm("dbtranslate.manage_translations"):
             section = next(
                 (a for a in app_list if a["name"] == self.translation_section_label),
                 None

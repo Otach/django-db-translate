@@ -5,8 +5,6 @@ dist/
 # Prevent unneeded django created files
 manage.py
 *.sqlite3
-django_db_translate/migrations/
-django_db_translate/models.py
 django_db_translate/tests.py
 
 # Any temp file created by custom makemessages
