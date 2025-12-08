@@ -1,6 +1,6 @@
-============
+===================
 django-db-translate
-============
+===================
 
 django-db-translate is an app with utilites to assist in project-wide translation.
 
