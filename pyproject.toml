@@ -12,7 +12,7 @@ dependencies = [
 description = "A Django app with utilites to assist in project-wide translation"
 readme = "README.rst"
 license = "BSD-3-Clause"
-requires-python = ">= 3.13"
+requires-python = ">= 3.12"
 authors = [
     {name = "Mason Weaver", email = "mason@swingproxy.com"},
 ]
