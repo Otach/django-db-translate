@@ -1,6 +1,32 @@
 {% extends "admin/change_list.html" %}
 {% load i18n static admin_list %}
 
+{% block extrastyle %}
+{{ block.super }}
+<style>
+.translation-container {
+    display: flex;
+    flex-flow: column;
+    margin: 10px 0px;
+}
+.translation-container > *:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+span.ddt-subheader {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 2px !important;
+    margin-top: 10px;
+}
+
+span.ddt-comment {
+    text-indent: 15px;
+    font-style: italic;
+}
+</style>
+{% endblock %}
+
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
@@ -41,8 +67,25 @@
                                 {% endif %}
                                 <tr class="real">
                                     {{ form.id }}
-                                    <td>{{ form.raw_string.value }}</td>
-                                    <td>{{ form.translated }}</td>
+                                    <td>
+                                        <div class="translation-container">
+                                            <span>{{ form.raw_string.value }}</span>
+                                            {% if form.msgctxt.value %}
+                                            <span class="ddt-subheader">Context:</span>
+                                            <span class="ddt-comment">{{ form.msgctxt.value }}</span>
+                                            {% endif %}
+                                            {% if form.comment.value %}
+                                            <span class="ddt-subheader">Comment:</span>
+                                            <span class="ddt-comment">{{ form.comment.value }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="translation-container">
+                                            {{ form.translated }}
+                                            {{ form.tcomment }}
+                                        </div>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>

@@ -18,7 +18,7 @@ class DBTranslateAdminMiddleware(object):
             return self.get_response(request)
 
         lang = request.GET.get("lang")
-        if lang is not None and (lang in registry.registry or lang == settings.LANGUAGE_CODE):
+        if lang is not None and lang in registry.available_locales_codes:
             activate(lang)
             request.LANGUAGE_CODE = lang
         else:

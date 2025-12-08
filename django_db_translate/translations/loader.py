@@ -38,13 +38,19 @@ class LocaleInfo:
     def _load(self):
         if not self._po_files:
             for lf in self.locale_files:
-                self._po_files[lf] = polib.pofile(lf)
+                po = polib.pofile(lf)
+                self._po_files[lf] = po
+                print(po.metadata)
 
         return
 
     def _save(self):
         for filepath, pofile in self._po_files.items():
             pofile.save(filepath)
+
+        # Invalidate the currently loaded .po files
+        self._po_files = {}
+        self._entries = []
 
 
 class TranslationRegistry:
@@ -63,8 +69,16 @@ class TranslationRegistry:
         return self._registry
 
     @property
+    def available_locales_codes(self):
+        defined_locales = sorted(self.registry.keys())
+        if settings.LANGUAGE_CODE not in defined_locales:
+            return [settings.LANGUAGE_CODE, *defined_locales]
+        return defined_locales
+
+    @property
     def available_locales(self):
-        return sorted(self.registry.keys())
+        ...
+
 
     def _load_po_paths(self) -> dict[str, LocaleInfo]:
         project_locale_paths = []

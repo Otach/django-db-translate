@@ -11,7 +11,10 @@ def locale_view(request, locale, context_func):
             {
                 "id": i,
                 "raw_string": x.msgid,
-                "translated": x.msgstr
+                "translated": x.msgstr,
+                "tcomment": x.tcomment,
+                "comment": x.comment,
+                "msgctxt": x.msgctxt,
             } for i, x in enumerate(locale.entries)
         ]
     )
@@ -22,6 +25,7 @@ def locale_view(request, locale, context_func):
         if fs.is_valid():
             for e, f in zip(locale.entries, fs):
                 e.msgstr = f.cleaned_data['translated']
+                e.tcomment = f.cleaned_data['tcomment']
             locale._save()
             return redirect(
                 reverse(f"admin:locale_view_{locale.locale}")
