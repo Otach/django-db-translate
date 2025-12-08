@@ -4,9 +4,9 @@ from django import forms
 
 class TranslationForm(forms.Form):
     id = forms.IntegerField(widget=forms.HiddenInput())
-    raw_string = forms.CharField()
-    comment = forms.CharField()
-    msgctxt = forms.CharField()
+    raw_string = forms.CharField(required=False)
+    comment = forms.CharField(required=False)
+    msgctxt = forms.CharField(required=False)
     translated = forms.CharField(
         widget=forms.Textarea({
             "rows": 3,
