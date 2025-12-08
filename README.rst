@@ -53,5 +53,12 @@ Quick start (Admin Translation Editing)
         path("admin/", admin.site.urls),
     ]
 
-3. Give the ``Dbtranslate | db translate permissions | Manage translations`` permission to any user that requires translation editing permissions
+3. Add "django_db_translate.middleware.DBTranslateAdminMiddleware" to your MIDDLEWARE setting after any other Locale manipulating middlewares::
+
+    MIDDLEWARE = [
+        ...,
+        'django_db_translate.middleware.DBTranslateAdminMiddleware'
+    ]
+
+4. Give the ``Dbtranslate | db translate permissions | Manage translations`` permission to any user that requires translation editing permissions
 
