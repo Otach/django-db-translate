@@ -1,8 +1,17 @@
+import logging
 import tempfile
 import os
+import polib
 
 from django.apps import apps
-from django.core.management.commands.makemessages import Command as MMCommand
+from django.core.management.commands.makemessages import (
+    Command as MMCommand,
+    check_programs
+)
+
+from django_db_translate.translations.query import DBTranslateQueryManager, DBTranslationString
+
+logger = logging.getLogger(__name__)
 
 
 class Command(MMCommand):
@@ -23,6 +32,19 @@ class Command(MMCommand):
         )
 
     def handle(self, *args, **options):
+        self.verbosity = options["verbosity"]
+
+        # Check for all programs before pulling anything from the database.
+        # `check_programs` raises `CommandError` when a program is not found.
+        # The command caller handles this Exception, so we should not catch
+        # it here.
+        check_programs(
+            "msguniq",
+            "msgmerge",
+            "msgattrib",
+            "xgettext",
+        )
+
         if options["include_db_strings"]:
             self._extract_db_strings()
 
@@ -44,16 +66,42 @@ class Command(MMCommand):
             if ((fields := getattr(model, "translatable_fields", None)))
         }
 
-        # Pull the values from each model and add to the set to prevent duplicates
-        strings = set()
+        # Pull the values from each model and add to the list
+        strings: list[str] = []
         for model, fields in models.items():
-            row_strings = list(model.objects.values_list(*fields).distinct())
-            for row_string in row_strings:
-                for s in row_string:
-                    strings.add(f'gettext("{str(s)}")')  # Wrap the string with the xgettext keyword
+
+            manager_cls = getattr(model, "dbtranslate_query_manager", DBTranslateQueryManager)
+            if not issubclass(manager_cls, DBTranslateQueryManager):
+                logger.warning(
+                    f"'dbtranslate_query_manager' for {model.__name__} must be a " +
+                    "subclass of django_db_translate.translations.query.DBTranslateQueryManager. " +
+                    "Falling back to default."
+                )
+                manager_cls = DBTranslateQueryManager
+
+            model_strings = manager_cls(model, fields)._get_strings()
+            # strings.extend(model_strings)
+
+            # Should we do this in the QueryManager?
+            for s in model_strings:
+                # Wrap the string with the xgettext keywords
+                if isinstance(s, str) and s:
+                    strings.append(
+                        'gettext(%r)' % polib.escape(s)
+                    )
+                elif isinstance(s, tuple) and len(s) == 2:
+                    strings.append(
+                        'pgettext(%r, %r)' % (polib.escape(s[1]), polib.escape(s[0]))
+                    )
+                else:
+                    if self.verbosity > 1:
+                        self.stderr.write(
+                            f"database string value of {s} must be either a string or a two " +
+                            "string value tuple"
+                        )
 
         if len(strings) == 0:
-            # Nothing to do, do not create the temp file
+            # Nothing to do, do return early
             if self.verbosity > 1:
                 self.stdout.write("No strings marked for translation were found in the database.")
             return

@@ -40,7 +40,6 @@ class LocaleInfo:
             for lf in self.locale_files:
                 po = polib.pofile(lf)
                 self._po_files[lf] = po
-                print(po.metadata)
 
         return
 
