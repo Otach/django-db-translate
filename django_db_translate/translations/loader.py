@@ -17,6 +17,11 @@ class EntryKeyIdentifier:
         if msgctxt == "":
             msgctxt = None
 
+        # Normalize newlines. Django sometimes return '\r\n' instead of '\n'
+        if msgctxt:
+            msgctxt = msgctxt.replace("\r\n", "\n")
+        msgid = msgid.replace("\r\n", "\n")
+
         return (msgctxt, msgid)
 
     @staticmethod
