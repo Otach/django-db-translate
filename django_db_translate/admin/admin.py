@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import reverse, reverse_lazy
 
-from django_db_translate.admin.views import locale_view
+from django_db_translate.admin.views import locale_view, refresh_registry
 from django_db_translate.translations import registry
 
 
@@ -29,6 +29,11 @@ class DBTranslateAdmin(admin.AdminSite):
                 wrap(self.app_index),
                 kwargs={"app_label": "dbtranslate"},
                 name="dbtranslate_list"
+            ),
+            path(
+                "dbtranslate/<str:locale>/refresh",
+                self.admin_view(refresh_registry),
+                name="refresh_registry"
             )
         ]
         for locale, lobj in registry.registry.items():

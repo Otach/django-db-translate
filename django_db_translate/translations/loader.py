@@ -75,8 +75,9 @@ class LocaleInfo:
     def _save(self):
         for filepath, pofile in self._po_files.items():
             pofile.save(filepath)
+        self._invalidate()
 
-        # Invalidate the currently loaded .po files
+    def _invalidate(self):
         self._po_files = {}
         self._entries = {}
 

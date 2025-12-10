@@ -37,6 +37,13 @@ span.ddt-comment {
 
 {% block content %}
 <div id="content-main">
+    {% if perms.dbtranslate.administrate_translations %}
+    <ul class="object-tools">
+        <li>
+            <a href="{% url 'admin:refresh_registry' locale=locale.locale %}">Refresh registry</a>
+        </li>
+    </ul>
+    {% endif %}
     {% if formset and formset.errors %}
     <p class="errornote">
     {% blocktranslate count counter=formset.total_error_count %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}

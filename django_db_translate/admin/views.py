@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, reverse
 from django.contrib import messages
 
 from django_db_translate.admin.forms import TranslationFormSet
-from django_db_translate.translations import EntryKeyIdentifier
+from django_db_translate.translations import registry, EntryKeyIdentifier
 
 logger = logging.getLogger(__name__)
 
@@ -69,5 +69,42 @@ def locale_view(request, locale, context_func):
             "formset": fs,
             **context_func(request)
         }
+    )
+
+@permission_required("dbtranslate.administrate_translations")
+def refresh_registry(request, locale):
+    locale_obj = registry.registry.get(locale)
+
+    if not locale_obj:
+        messages.add_message(
+            request,
+            messages.ERROR,
+            f"No registry entry for locale '{locale}' found."
+        )
+    else:
+        try:
+            locale_obj._invalidate()
+            if not locale_obj.entries:  # Calling this propery loads the entries
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    f"Locale ({locale}) reload was successful, but there were no entries."
+                )
+            else:
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    f"Registry for locale ({locale}) refreshed successfully."
+                )
+        except Exception as e:
+            logger.exception(f"Error refreshing registry for locale {locale}", exc_info=e)
+            messages.add_message(
+                request,
+                messages.ERROR,
+                f"Error occurred during locale ({locale}) refresh. Check logs for details."
+            )
+
+    return redirect(
+        reverse(f"admin:locale_view_{locale}")
     )
 
