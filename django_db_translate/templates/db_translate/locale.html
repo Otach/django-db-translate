@@ -51,6 +51,9 @@ span.ddt-comment {
                     <div>{{ formset.management_form }}</div>
                     {% endif %}
 
+                    <div class="changelist-footer">
+                        {% if formset %}<input type="submit" name="_save" class="default" value="Save">{% endif %}
+                    </div>
                     {% block result_list %}
                     <div class="results">
                         <table id="result_list">
@@ -69,11 +72,14 @@ span.ddt-comment {
                                     {{ form.id }}
                                     <td>
                                         <div class="translation-container">
-                                            <span>{{ form.raw_string.value }}</span>
+                                            {{ form.msgid }}
+                                            <span>{{ form.msgid.value }}</span>
+                                            {{ form.msgctxt }}
                                             {% if form.msgctxt.value %}
                                             <span class="ddt-subheader">Context:</span>
                                             <span class="ddt-comment">{{ form.msgctxt.value }}</span>
                                             {% endif %}
+                                            {{ form.comment }}
                                             {% if form.comment.value %}
                                             <span class="ddt-subheader">Comment:</span>
                                             <span class="ddt-comment">{{ form.comment.value }}</span>
@@ -82,7 +88,7 @@ span.ddt-comment {
                                     </td>
                                     <td>
                                         <div class="translation-container">
-                                            {{ form.translated }}
+                                            {{ form.msgstr }}
                                             {{ form.tcomment }}
                                         </div>
                                     </td>
@@ -91,10 +97,9 @@ span.ddt-comment {
                             </tbody>
                         </table>
                     </div>
-                    {% if action_form and actions_on_bottom and show_admin_actions %}{% admin_actions %}{% endif %}
                     {% endblock %}
                     <div class="changelist-footer">
-                        {% if formset %}<input type="submit" name="_save" class="default" value="{% translate 'Save' %}">{% endif %}
+                        {% if formset %}<input type="submit" name="_save" class="default" value="Save">{% endif %}
                     </div>
                 </form>
             </div>
