@@ -9,7 +9,7 @@ from django.core.management.commands.makemessages import (
     check_programs
 )
 
-from django_db_translate.translations.query import DBTranslateQueryManager, DBTranslationString
+from django_db_translate.translations.query import DBTranslateQueryManager, DBStringPO
 
 logger = logging.getLogger(__name__)
 
@@ -79,26 +79,18 @@ class Command(MMCommand):
                 )
                 manager_cls = DBTranslateQueryManager
 
-            model_strings = manager_cls(model, fields)._get_strings()
-            # strings.extend(model_strings)
+            model_strings = manager_cls(model, fields).get_strings()
 
-            # Should we do this in the QueryManager?
             for s in model_strings:
-                # Wrap the string with the xgettext keywords
-                if isinstance(s, str) and s:
-                    strings.append(
-                        'gettext(%r)' % polib.escape(s)
+
+                if not isinstance(s, DBStringPO):
+                    self.stderr.write(
+                        f"Translation query manager method `get_strings` for '{model.__name__}'" +
+                        " must return a list of `DBStringPO` objects"
                     )
-                elif isinstance(s, tuple) and len(s) == 2:
-                    strings.append(
-                        'pgettext(%r, %r)' % (polib.escape(s[1]), polib.escape(s[0]))
-                    )
-                else:
-                    if self.verbosity > 1:
-                        self.stderr.write(
-                            f"database string value of {s} must be either a string or a two " +
-                            "string value tuple"
-                        )
+                    return
+
+                strings.extend(s.translation_strings())
 
         if len(strings) == 0:
             # Nothing to do, do return early
